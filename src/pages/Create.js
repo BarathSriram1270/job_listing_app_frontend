@@ -7,56 +7,52 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-const initial = { profile: "", exp: 0, techs: [], desc:"" };
+
+const initial = { profile: "", exp: 0, techs: [], desc: "" };
 
 const Create = () => {
-    const skillSet = [
-        {
-          name: "Javascript"
-        },
-        {
-          name: "Java"
-        },
-        {
-          name: "Python"
-        },
-        {
-          name: "Django"
-        },
-        {
-          name: "Rust"
-        }
-      ];
+  const skillSet = ["Javascript", "Java", "Python", "Django", "Rust"];
   const navigate = useNavigate();
   const [form, setForm] = useState(initial);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetch("https://joblistingappbackend-production.up.railway.app/post", {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    })
-      .then((response) => console.log(response))
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-      navigate('/employee/feed');
+  // Handle checkbox selection
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      techs: checked
+        ? [...prevForm.techs, value]
+        : prevForm.techs.filter((tech) => tech !== value),
+    }));
   };
 
-  const { profile, exp, desc } = form;
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("https://joblistingappbackend-production.up.railway.app/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-  const handleChange = (e) => {
-    setForm({...form , techs : [...form.techs, e.target.value]});
-  }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+
+      navigate("/employee/feed"); // Navigate only after successful API response
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
-    <Paper sx={{ padding:"2%"}} elevation={3}>
+    <Paper sx={{ padding: "2%" }} elevation={3}>
       <Typography sx={{ margin: "3% auto" }} align="center" variant="h5">
         Create New Post
       </Typography>
@@ -69,58 +65,53 @@ const Create = () => {
           }}
         >
           <TextField
-            type="string"
+            type="text"
             sx={{ width: "50%", margin: "2% auto" }}
             required
             onChange={(e) => setForm({ ...form, profile: e.target.value })}
-            label="Job-profile"
+            label="Job Profile"
             variant="outlined"
-            value={profile}
+            value={form.profile}
           />
           <TextField
-            min="0"
             type="number"
             sx={{ width: "50%", margin: "2% auto" }}
             required
             onChange={(e) => setForm({ ...form, exp: e.target.value })}
             label="Years of Experience"
             variant="outlined"
-            value={exp}
+            value={form.exp}
           />
-           <TextField
-            type="string"
+          <TextField
+            type="text"
             sx={{ width: "50%", margin: "2% auto" }}
             required
             multiline
             rows={4}
             onChange={(e) => setForm({ ...form, desc: e.target.value })}
-            label="Job-desc"
+            label="Job Description"
             variant="outlined"
-            value={desc}
+            value={form.desc}
           />
-          <Box sx={{ margin:"1% auto"}}>
-          <h3>Please mention required skills</h3>
-         <ul>
-        {skillSet.map(({ name }, index) => {
-          return (
-            <li key={index}>
-              <div >
-                <div>
-                  <input
-                    type="checkbox"
-                    id={`custom-checkbox-${index}`}
-                    name={name}
-                    value={name}
-                    onChange={handleChange}  
-                  />
-                  <label htmlFor={`custom-checkbox-${index}`}>{name}</label>
-                </div>
-              </div>
-            </li>
-          );
-        })}
-       
-      </ul>
+          <Box sx={{ margin: "1% auto" }}>
+            <h3>Please mention required skills</h3>
+            <ul>
+              {skillSet.map((name, index) => (
+                <li key={index}>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id={`custom-checkbox-${index}`}
+                      name={name}
+                      value={name}
+                      checked={form.techs.includes(name)}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor={`custom-checkbox-${index}`}>{name}</label>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </Box>
           <Button
             sx={{ width: "50%", margin: "2% auto" }}
