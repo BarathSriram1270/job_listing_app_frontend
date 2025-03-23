@@ -32,7 +32,7 @@ const Create = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/post", {
+    fetch("https://joblistingappbackend-production.up.railway.app/post", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
