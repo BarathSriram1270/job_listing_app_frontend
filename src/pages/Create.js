@@ -30,7 +30,7 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://joblistingappbackend-production.up.railway.app/swagger-ui.html/post", {
+      const response = await fetch("https://joblistingappbackend-production.up.railway.app/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
