@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 
 // Replace localhost with your deployed Railway backend URL
-const BACKEND_URL = "https://joblistingappbackend-production.up.railway.app/swagger-ui.html";
+const BACKEND_URL = "https://joblistingappbackend-production.up.railway.app";
 
 const Feed = () => {
   const [query, setQuery] = useState("");
